@@ -35,6 +35,9 @@ import fs from "fs";
 import path from "path";
 
 const app = express();
+
+//console.log(path.join(path.resolve(),"public"));
+app.use(express.static(path.join(path.resolve(),"public")));
 //setting up the view engine
 app.set("view engine", "ejs");
 
@@ -59,7 +62,9 @@ app.get("/", (req, res) => {
     //const pathlocation=path.resolve();
     //res.sendFile(path.join(pathlocation,"./index.html"));
 
-    res.render("index",{ name:"Ankur"});
+    //res.render("index",{ name:"Ankur"});
+
+    res.sendFile("index");
 });
 
 app.listen(5000, () => {
