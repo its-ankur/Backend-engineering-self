@@ -31,11 +31,12 @@
 
 
 import express from "express";
-import fs from "fs";
+//import fs from "fs";
 import path from "path";
 
 const app = express();
-
+app.use(express.static("public"));
+app.use(express.urlencoded({extended:true}));
 //console.log(path.join(path.resolve(),"public"));
 app.use(express.static(path.join(path.resolve(),"public")));
 //setting up the view engine
@@ -62,9 +63,12 @@ app.get("/", (req, res) => {
     //const pathlocation=path.resolve();
     //res.sendFile(path.join(pathlocation,"./index.html"));
 
-    //res.render("index",{ name:"Ankur"});
+    res.render("index",{ name:"Ankur"});
+});
 
-    res.sendFile("index");
+app.post("/", (req, res) => {
+    console.log(req.body);
+    res.end();
 });
 
 app.listen(5000, () => {
