@@ -68,6 +68,11 @@ app.get("/", (req, res) => {
     res.render("index",{ name:"Ankur"});
 });
 
+app.get('/add',(req,res)=>{
+    
+    res.send("Nice");
+});
+
 app.get("/success", (req, res) => {
     res.render("success");
 });
