@@ -33,14 +33,29 @@
 import express from "express";
 //import fs from "fs";
 import path from "path";
+import mongoose from "mongoose";
 
-const users=[];
+mongoose.connect("mongodb://127.0.0.1:27017", {
+    dbName: "backend",
+}).then(() => {
+    console.log("DB connected");
+}).catch((err) => {
+    console.log(err);
+});
+
+const messageSchema = new mongoose.Schema({
+    name: String,
+    email: String,
+});
+
+const Message = mongoose.model("Message", messageSchema);
+
 
 const app = express();
 app.use(express.static("public"));
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 //console.log(path.join(path.resolve(),"public"));
-app.use(express.static(path.join(path.resolve(),"public")));
+app.use(express.static(path.join(path.resolve(), "public")));
 //setting up the view engine
 app.set("view engine", "ejs");
 
@@ -57,7 +72,7 @@ app.get("/", (req, res) => {
     // });
     //res.status(404).send("Page not found");
     //const file = fs.readFileSync("./index.html", "utf-8");
-    
+
     //console.log(path.resolve());
     //console.log(__dirname);
     //res.sendFile("./index.html");
@@ -65,21 +80,25 @@ app.get("/", (req, res) => {
     //const pathlocation=path.resolve();
     //res.sendFile(path.join(pathlocation,"./index.html"));
 
-    res.render("index",{ name:"Ankur"});
+    res.render("index", { name: "Ankur" });
 });
 
-app.get('/add',(req,res)=>{
-    
-    res.send("Nice");
+app.get('/add', async (req, res) => {
+    await Message.create({
+        name: "Ankur1",
+        email: "ankur1037@gmail.com"
+    });
+    res.send("Message added");
 });
 
 app.get("/success", (req, res) => {
     res.render("success");
 });
 
-app.post("/contact", (req, res) => {
+app.post("/contact", async (req, res) => {
     //console.log(req.body.name);
-    users.push({username:req.body.name,email:req.body.email});
+    const messageData={ name: req.body.name, email: req.body.email };
+    await Message.create(messageData);
     res.redirect("/success");
 });
 
