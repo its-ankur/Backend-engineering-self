@@ -34,7 +34,7 @@ import express from "express";
 //import fs from "fs";
 import path from "path";
 import mongoose from "mongoose";
-
+import cookieParser from "cookie-parser";
 mongoose.connect("mongodb://127.0.0.1:27017", {
     dbName: "backend",
 }).then(() => {
@@ -54,6 +54,7 @@ const Message = mongoose.model("Message", messageSchema);
 const app = express();
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 //console.log(path.join(path.resolve(),"public"));
 app.use(express.static(path.join(path.resolve(), "public")));
 //setting up the view engine
@@ -79,8 +80,32 @@ app.get("/", (req, res) => {
 
     //const pathlocation=path.resolve();
     //res.sendFile(path.join(pathlocation,"./index.html"));
+    const {token}=req.cookies;
+    if(token){
+        res.render("logout");
+    }
+    else{
+        res.render("login");
+    }
+    //res.render("login");
+});
 
-    res.render("index", { name: "Ankur" });
+app.post("/login",(req,res)=>{
+    res.cookie("token","iamin",{
+        httpOnly:true,
+        expires:new Date(Date.now()+60*1000)
+    });
+    res.redirect("/");
+});
+
+
+
+app.get("/logout",(req,res)=>{
+    res.cookie("token",null,{
+        httpOnly:true,
+        expires:new Date(Date.now())
+    });
+    res.redirect("/");
 });
 
 app.get('/add', async (req, res) => {
